@@ -4,7 +4,7 @@ from collections import defaultdict
 
 import numpy as np
 import streamlit as st
-from sentence_transformers import SentenceTransformer
+from fastembed import TextEmbedding
 import chromadb
 from rank_bm25 import BM25Okapi
 from openai import OpenAI
@@ -63,7 +63,7 @@ Be precise. Reference papers by [N] number."""
 
 @st.cache_resource(show_spinner="Loading embedding model...")
 def load_embed_model():
-    return SentenceTransformer("all-MiniLM-L6-v2")
+    return TextEmbedding("sentence-transformers/all-MiniLM-L6-v2")
 
 @st.cache_resource(show_spinner="Loading ChromaDB...")
 def load_chroma():
@@ -89,7 +89,7 @@ def tokenise(text: str) -> list:
     return re.sub(r'[^\w\s]', '', text.lower()).split()
 
 def dense_retrieve(query, embed_model, collection, top_k=TOP_K_DENSE):
-    query_emb = embed_model.encode([query]).tolist()
+    query_emb = [list(embed_model.embed([query]))[0].tolist()]
     results   = collection.query(
         query_embeddings = query_emb,
         n_results        = top_k,

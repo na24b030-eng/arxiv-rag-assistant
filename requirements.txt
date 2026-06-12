@@ -1,5 +1,6 @@
 streamlit
-sentence-transformers
+sentence-transformers==2.7.0
+tokenizers==0.19.1
 chromadb==0.5.23
 rank-bm25
 openai

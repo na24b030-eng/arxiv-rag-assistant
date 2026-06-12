@@ -1,0 +1,18 @@
+# API keys — never commit
+.env
+.streamlit/secrets.toml
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Large index files — host on Google Drive
+chroma_db/
+bm25_index.pkl
+chunks.pkl
+
+# OS
+.DS_Store
+Thumbs.db

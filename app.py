@@ -4,10 +4,9 @@ from collections import defaultdict
 
 import numpy as np
 import streamlit as st
-from fastembed import TextEmbedding
-import chromadb
+from sklearn.metrics.pairwise import cosine_similarity
 from rank_bm25 import BM25Okapi
-from openai import OpenAI
+from google import genai
 
 # ============================================================
 # PAGE CONFIG
@@ -23,16 +22,16 @@ st.set_page_config(
 # CONFIGURATION
 # ============================================================
 
-CHROMA_DIR  = "chroma_db"
-BM25_PATH   = "bm25_index.pkl"
-CHUNKS_PATH = "chunks.pkl"
+EMBEDDINGS_PATH = "embeddings.npy"
+CHUNKS_PATH     = "chunks.pkl"
+BM25_PATH       = "bm25_index.pkl"
 
 TOP_K_DENSE  = 10
 TOP_K_SPARSE = 10
 TOP_K_FINAL  = 5
 RRF_K        = 60
 
-MODEL = "openrouter/auto"
+MODEL = "gemini-2.0-flash"
 
 RAG_SYSTEM_PROMPT = """You are a precise ML research assistant. Answer using ONLY the provided context.
 
@@ -63,22 +62,21 @@ Be precise. Reference papers by [N] number."""
 
 @st.cache_resource(show_spinner="Loading embedding model...")
 def load_embed_model():
-    return TextEmbedding("sentence-transformers/all-MiniLM-L6-v2")
+    from sentence_transformers import SentenceTransformer
+    return SentenceTransformer("all-MiniLM-L6-v2")
 
-@st.cache_resource(show_spinner="Loading ChromaDB...")
-def load_chroma():
-    client     = chromadb.PersistentClient(path=CHROMA_DIR)
-    collection = client.get_collection("arxiv_ml")
-    return collection
-
-@st.cache_resource(show_spinner="Loading BM25 index...")
-def load_bm25():
-    with open(BM25_PATH, "rb") as f:
-        return pickle.load(f)
+@st.cache_resource(show_spinner="Loading embeddings...")
+def load_embeddings():
+    return np.load(EMBEDDINGS_PATH)
 
 @st.cache_resource(show_spinner="Loading chunks...")
 def load_chunks():
     with open(CHUNKS_PATH, "rb") as f:
+        return pickle.load(f)
+
+@st.cache_resource(show_spinner="Loading BM25 index...")
+def load_bm25():
+    with open(BM25_PATH, "rb") as f:
         return pickle.load(f)
 
 # ============================================================
@@ -88,20 +86,22 @@ def load_chunks():
 def tokenise(text: str) -> list:
     return re.sub(r'[^\w\s]', '', text.lower()).split()
 
-def dense_retrieve(query, embed_model, collection, top_k=TOP_K_DENSE):
-    query_emb = [list(embed_model.embed([query]))[0].tolist()]
-    results   = collection.query(
-        query_embeddings = query_emb,
-        n_results        = top_k,
-        include          = ["documents", "metadatas", "distances"]
-    )
+def dense_retrieve(query, embed_model, embeddings, chunks, top_k=TOP_K_DENSE):
+    query_emb = embed_model.encode([query])
+    scores    = cosine_similarity(query_emb, embeddings)[0]
+    top_idx   = np.argsort(scores)[::-1][:top_k]
     hits = []
-    for i in range(len(results["ids"][0])):
+    for idx in top_idx:
+        c = chunks[idx]
         hits.append({
-            "chunk_id": results["ids"][0][i],
-            "score":    1 - results["distances"][0][i],
-            "document": results["documents"][0][i],
-            "metadata": results["metadatas"][0][i]
+            "chunk_id": c["chunk_id"],
+            "score":    float(scores[idx]),
+            "document": c["chunk_text"],
+            "metadata": {
+                "arxiv_id":   c["arxiv_id"],
+                "title":      c["title"],
+                "categories": c["categories"]
+            }
         })
     return hits
 
@@ -147,13 +147,13 @@ def reciprocal_rank_fusion(dense_hits, sparse_hits, k=RRF_K, top_k=TOP_K_FINAL):
         results.append(hit)
     return results
 
-def hybrid_retrieve(query, embed_model, collection, bm25_index, chunks):
-    dense_hits  = dense_retrieve(query, embed_model, collection)
+def hybrid_retrieve(query, embed_model, embeddings, bm25_index, chunks):
+    dense_hits  = dense_retrieve(query, embed_model, embeddings, chunks)
     sparse_hits = sparse_retrieve(query, bm25_index, chunks)
     return reciprocal_rank_fusion(dense_hits, sparse_hits)
 
 # ============================================================
-# OPENROUTER GENERATION FUNCTIONS
+# GEMINI FUNCTIONS
 # ============================================================
 
 def build_context_block(retrieved_chunks):
@@ -169,32 +169,28 @@ def build_context_block(retrieved_chunks):
 def generate_grounded_answer(query, retrieved_chunks, client):
     context  = build_context_block(retrieved_chunks)
     prompt   = (
+        f"{RAG_SYSTEM_PROMPT}\n\n"
         f"---\nCONTEXT:\n{context}\n\n"
         f"---\nQUESTION: {query}\n\nANSWER:"
     )
-    response = client.chat.completions.create(
+    response = client.models.generate_content(
         model    = MODEL,
-        messages = [
-            {"role": "system", "content": RAG_SYSTEM_PROMPT},
-            {"role": "user",   "content": prompt}
-        ]
+        contents = prompt
     )
-    return response.choices[0].message.content
+    return response.text
 
 def detect_contradictions(query, retrieved_chunks, client):
     context = build_context_block(retrieved_chunks)
     prompt  = (
-        f"You are given {len(retrieved_chunks)} papers retrieved for the query: \"{query}\"\n\n"
+        f"{CONTRADICTION_SYSTEM_PROMPT}\n\n"
+        f"Papers retrieved for query: \"{query}\"\n\n"
         f"{context}"
     )
-    response = client.chat.completions.create(
+    response = client.models.generate_content(
         model    = MODEL,
-        messages = [
-            {"role": "system", "content": CONTRADICTION_SYSTEM_PROMPT},
-            {"role": "user",   "content": prompt}
-        ]
+        contents = prompt
     )
-    return response.choices[0].message.content
+    return response.text
 
 def get_contradiction_level(report_text):
     for level in ["HIGH", "MODERATE", "LOW", "NONE"]:
@@ -209,7 +205,7 @@ def get_contradiction_level(report_text):
 st.title("🔬 ArXiv Research Assistant")
 st.caption(
     "RAG pipeline · Dense + BM25 hybrid retrieval · "
-    "Reciprocal Rank Fusion · OpenRouter grounded generation · "
+    "Reciprocal Rank Fusion · Gemini grounded generation · "
     "Contradiction detection"
 )
 st.divider()
@@ -221,12 +217,12 @@ st.divider()
 with st.sidebar:
     st.header("⚙️ Configuration")
     api_key = st.text_input(
-        "OpenRouter API Key",
+        "Gemini API Key",
         type="password",
-        placeholder="sk-or-v1-..."
+        placeholder="Paste your Gemini API key here"
     )
     st.caption(
-        "Get a free key at [openrouter.ai](https://openrouter.ai)"
+        "Get a free key at [aistudio.google.com](https://aistudio.google.com)"
     )
     st.divider()
     st.markdown("**Knowledge base**")
@@ -234,13 +230,13 @@ with st.sidebar:
     st.markdown("- Categories: cs.LG · cs.AI · cs.CL · cs.CV · stat.ML")
     st.divider()
     st.markdown("**Retrieval**")
-    st.markdown("- Dense: ChromaDB + MiniLM")
+    st.markdown("- Dense: MiniLM cosine similarity")
     st.markdown("- Sparse: BM25Okapi")
     st.markdown("- Fusion: RRF (k=60)")
-    st.markdown(f"- Top {TOP_K_FINAL} papers sent to LLM")
+    st.markdown(f"- Top {TOP_K_FINAL} papers sent to Gemini")
     st.divider()
     st.markdown("**Generation**")
-    st.markdown("- OpenRouter (auto — free tier)")
+    st.markdown("- Gemini 2.0 Flash")
     st.markdown("- Inline [N] citations")
     st.markdown("- Contradiction analysis")
 
@@ -249,9 +245,9 @@ with st.sidebar:
 # ============================================================
 
 embed_model = load_embed_model()
-collection  = load_chroma()
-bm25_index  = load_bm25()
+embeddings  = load_embeddings()
 chunks      = load_chunks()
+bm25_index  = load_bm25()
 
 # ============================================================
 # QUERY INPUT
@@ -259,7 +255,7 @@ chunks      = load_chunks()
 
 query = st.text_input(
     "Ask a question about ML research",
-    placeholder="e.g. What is transfer learning?  /  How do transformers work?",
+    placeholder="e.g. What is transfer learning?  /  How does attention work?",
 )
 
 run_btn = st.button(
@@ -269,7 +265,7 @@ run_btn = st.button(
 )
 
 if not api_key:
-    st.info("Enter your OpenRouter API key in the sidebar to start.")
+    st.info("Enter your Gemini API key in the sidebar to start.")
 
 # ============================================================
 # ON SEARCH
@@ -277,16 +273,12 @@ if not api_key:
 
 if run_btn and api_key and query:
 
-    # Build OpenRouter client
-    client = OpenAI(
-        base_url = "https://openrouter.ai/api/v1",
-        api_key  = api_key,
-    )
+    client = genai.Client(api_key=api_key)
 
     # Step 1 — Hybrid Retrieval
     with st.spinner("Retrieving relevant papers..."):
         retrieved = hybrid_retrieve(
-            query, embed_model, collection, bm25_index, chunks
+            query, embed_model, embeddings, bm25_index, chunks
         )
 
     # Step 2 — Grounded Answer

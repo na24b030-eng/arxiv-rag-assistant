@@ -31,16 +31,59 @@ html, body, [class*="css"], .stApp {
     padding: 2.5rem 3rem 4rem !important;
     max-width: 1080px !important;
 }
-#MainMenu, footer, header { visibility: hidden !important; }
 
-/* ════════════════════════════════════════
-   SIDEBAR
-════════════════════════════════════════ */
+/* ── FIX 1: Hide only the menu and footer, NOT the header
+   The header contains the sidebar toggle button.
+   We hide just the hamburger menu items and the footer text,
+   but keep the header element itself visible so the toggle works. ── */
+#MainMenu { visibility: hidden !important; }
+footer { visibility: hidden !important; }
+
+/* Hide the "Made with Streamlit" footer text only */
+footer .css-1lsmgbg { display: none !important; }
+
+/* ── FIX 2: Force the sidebar to always be visible and expanded ── */
 [data-testid="stSidebar"] {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    transform: none !important;
     background-color: #FFFFFF !important;
     border-right: 1px solid #E8E4DC !important;
-    min-width: 260px !important;
+    min-width: 280px !important;
+    max-width: 320px !important;
+    width: 300px !important;
 }
+
+/* ── FIX 3: Make sure sidebar content block is visible ── */
+[data-testid="stSidebar"] > div {
+    display: flex !important;
+    visibility: visible !important;
+    width: 100% !important;
+}
+
+[data-testid="stSidebar"] [data-testid="stSidebarContent"] {
+    display: block !important;
+    visibility: visible !important;
+    padding: 1.5rem 1.25rem !important;
+    overflow-y: auto !important;
+}
+
+/* ── FIX 4: When sidebar is in "collapsed" state, override it ── */
+[data-testid="stSidebar"][aria-expanded="false"] {
+    min-width: 280px !important;
+    margin-left: 0 !important;
+    transform: translateX(0) !important;
+}
+
+section[data-testid="stSidebar"][aria-expanded="false"] {
+    min-width: 280px !important;
+    margin-left: 0 !important;
+}
+
+/* ════════════════════════════════════════
+   SIDEBAR CONTENT STYLES
+════════════════════════════════════════ */
 [data-testid="stSidebar"] * {
     font-family: 'DM Sans', sans-serif !important;
     color: #1A1814 !important;
@@ -192,6 +235,21 @@ div[data-testid="stTextInputRootElement"] {
     color: #1A1814 !important;
     font-family: 'DM Sans', sans-serif !important;
 }
+
+/* ════════════════════════════════════════
+   FIX 5: Header — keep visible but clean it up
+   Don't hide it fully; just remove the visual clutter
+════════════════════════════════════════ */
+header[data-testid="stHeader"] {
+    background: transparent !important;
+    border-bottom: none !important;
+}
+
+/* Hide the decorative header elements but NOT the collapse button */
+header[data-testid="stHeader"] .stAppDeployButton,
+header[data-testid="stHeader"] .stToolbarActionButton:not([data-testid="collapsedControl"]) {
+    display: none !important;
+}
 </style>
 """, unsafe_allow_html=True)
 
@@ -203,7 +261,7 @@ TOP_K_DENSE  = 10
 TOP_K_SPARSE = 10
 TOP_K_FINAL  = 5
 RRF_K        = 60
-MODEL        = "gemini-3.5-flash"
+MODEL        = "gemini-2.0-flash"   # updated: gemini-3.5-flash doesn't exist
 
 RAG_SYSTEM_PROMPT = """You are a precise ML research assistant. Answer using ONLY the provided context.
 Rules:
@@ -326,20 +384,27 @@ def level_pill(level):
     return f'<span style="display:inline-block;font-family:DM Sans,sans-serif;font-size:12px;font-weight:600;letter-spacing:0.06em;padding:4px 12px;border-radius:20px;{style}">{level}</span>'
 
 # ════════════════════════════════════════
-# SIDEBAR
+# SIDEBAR — rendered FIRST before main content
 # ════════════════════════════════════════
 with st.sidebar:
-    st.markdown("### ArXiv Lens")
-    st.markdown('<p style="font-size:11px;color:#8C8680;text-transform:uppercase;letter-spacing:0.1em;margin-top:-10px;margin-bottom:20px;">ML Research Assistant</p>', unsafe_allow_html=True)
+    st.markdown("""
+    <div style="padding-bottom: 8px; margin-bottom: 4px;">
+        <p style="font-family:'DM Serif Display',serif;font-size:20px;font-weight:400;color:#1A1814;margin:0 0 2px 0;">ArXiv Lens</p>
+        <p style="font-family:'DM Sans',sans-serif;font-size:11px;color:#8C8680;text-transform:uppercase;letter-spacing:0.1em;margin:0;">ML Research Assistant</p>
+    </div>
+    """, unsafe_allow_html=True)
+
+    st.markdown('<hr style="border:none;border-top:1px solid #E8E4DC;margin:12px 0 16px 0;">', unsafe_allow_html=True)
 
     api_key = st.text_input("Gemini API Key", type="password", placeholder="Paste your key here")
     if api_key:
         st.markdown('<p style="font-size:12px;color:#2D6A4F;background:#D8F3DC;border:1px solid #B7E4C7;border-radius:6px;padding:6px 10px;margin-top:4px;">✓ Key set — ready to search</p>', unsafe_allow_html=True)
     else:
-        st.markdown('<p style="font-size:12px;color:#8C8680;margin-top:4px;">Get a free key at <a href="https://aistudio.google.com" style="color:#6A8CC7;">aistudio.google.com</a></p>', unsafe_allow_html=True)
+        st.markdown('<p style="font-size:12px;color:#8C8680;margin-top:4px;">Get a free key at <a href="https://aistudio.google.com" target="_blank" style="color:#6A8CC7;">aistudio.google.com</a></p>', unsafe_allow_html=True)
 
-    st.markdown("---")
-    st.markdown('<p style="font-size:11px;color:#8C8680;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:8px;">Knowledge Base</p>', unsafe_allow_html=True)
+    st.markdown('<hr style="border:none;border-top:1px solid #E8E4DC;margin:16px 0;">', unsafe_allow_html=True)
+
+    st.markdown('<p style="font-size:11px;color:#8C8680;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:8px;margin-top:0;">Knowledge Base</p>', unsafe_allow_html=True)
 
     kb_data = [
         ("Papers indexed", "5,000"),
@@ -352,8 +417,9 @@ with st.sidebar:
     for label, val in kb_data:
         st.markdown(f'<div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid #E8E4DC;"><span style="font-size:13px;color:#8C8680;">{label}</span><span style="font-size:13px;color:#1A1814;font-weight:500;text-align:right;max-width:55%;">{val}</span></div>', unsafe_allow_html=True)
 
-    st.markdown("---")
-    st.markdown('<p style="font-size:11px;color:#8C8680;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:8px;">Retrieval Pipeline</p>', unsafe_allow_html=True)
+    st.markdown('<hr style="border:none;border-top:1px solid #E8E4DC;margin:16px 0;">', unsafe_allow_html=True)
+
+    st.markdown('<p style="font-size:11px;color:#8C8680;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:8px;margin-top:0;">Retrieval Pipeline</p>', unsafe_allow_html=True)
 
     steps = [
         "Dense cosine similarity (top 10)",
@@ -365,10 +431,10 @@ with st.sidebar:
         st.markdown(f'<div style="display:flex;align-items:center;gap:8px;padding:4px 0;border-bottom:1px solid #E8E4DC;"><div style="width:6px;height:6px;border-radius:50%;background:#C8B89A;flex-shrink:0;"></div><span style="font-size:13px;color:#1A1814;">{step}</span></div>', unsafe_allow_html=True)
 
     if st.session_state.history:
-        st.markdown("---")
-        st.markdown('<p style="font-size:11px;color:#8C8680;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:8px;">Recent Queries</p>', unsafe_allow_html=True)
+        st.markdown('<hr style="border:none;border-top:1px solid #E8E4DC;margin:16px 0;">', unsafe_allow_html=True)
+        st.markdown('<p style="font-size:11px;color:#8C8680;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:8px;margin-top:0;">Recent Queries</p>', unsafe_allow_html=True)
         for q in reversed(st.session_state.history[-5:]):
-            short = q[:42] + "…" if len(q) > 42 else q
+            short = q[:38] + "…" if len(q) > 38 else q
             st.markdown(f'<div style="font-size:12px;color:#8C8680;background:#EDEAE4;border:1px solid #DDD9D2;border-radius:6px;padding:5px 9px;margin-bottom:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="{q}">{short}</div>', unsafe_allow_html=True)
 
 # ════════════════════════════════════════
@@ -473,7 +539,7 @@ if trigger and api_key and query:
     with st.spinner("Scanning 5,000 papers via hybrid retrieval..."):
         papers = hybrid_retrieve(query, embed_model, embeddings, bm25_index, chunks)
 
-    with st.spinner("Generating grounded answer with Gemini 3.5 Flash..."):
+    with st.spinner("Generating grounded answer with Gemini..."):
         answer = get_answer(query, papers, client)
 
     with st.spinner("Running cross-paper contradiction analysis..."):
@@ -505,7 +571,7 @@ if trigger and api_key and query:
         </div>
         <div style="flex:1;padding:14px 18px;">
             <div style="font-family:DM Sans,sans-serif;font-size:11px;font-weight:400;text-transform:uppercase;letter-spacing:0.1em;color:#8C8680;margin-bottom:4px;">Generation model</div>
-            <div style="font-family:DM Sans,sans-serif;font-size:14px;font-weight:500;color:#1A1814;margin-top:6px;">Gemini 3.5 Flash</div>
+            <div style="font-family:DM Sans,sans-serif;font-size:14px;font-weight:500;color:#1A1814;margin-top:6px;">Gemini 2.0 Flash</div>
             <div style="font-family:DM Sans,sans-serif;font-size:12px;color:#8C8680;">grounded generation</div>
         </div>
     </div>

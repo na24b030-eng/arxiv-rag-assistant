@@ -19,186 +19,261 @@ st.set_page_config(
 # ── CSS ──────────────────────────────────────────────────────
 st.markdown("""
 <style>
-@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&family=DM+Serif+Display:ital@0;1&display=swap');
 
-/* Reset & base */
+/* ── Reset & base ── */
 html, body, [class*="css"] {
-    font-family: 'Inter', sans-serif;
-    background: #10121A;
-    color: #C8D0E0;
+    font-family: 'DM Sans', sans-serif;
+    background-color: #F7F5F0;
+    color: #1A1814;
 }
-.stApp { background: #10121A; }
+.stApp { background-color: #F7F5F0; }
 #MainMenu, footer, header { visibility: hidden; }
 .block-container {
-    padding: 2rem 2.5rem 3rem;
-    max-width: 1100px;
+    padding: 2.5rem 3rem 4rem;
+    max-width: 1080px;
 }
+
+/* ── Sidebar ── */
+section[data-testid="stSidebar"] {
+    background-color: #FFFFFF !important;
+    border-right: 1px solid #E8E4DC !important;
+}
+section[data-testid="stSidebar"] > div {
+    padding: 2rem 1.5rem !important;
+}
+.sidebar-brand {
+    font-family: 'DM Serif Display', serif;
+    font-size: 18px;
+    color: #1A1814;
+    margin-bottom: 2px;
+}
+.sidebar-brand-sub {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px;
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: #8C8680;
+    margin-bottom: 1.5rem;
+}
+.sidebar-divider {
+    border: none;
+    border-top: 1px solid #E8E4DC;
+    margin: 1.25rem 0;
+}
+.sidebar-section-label {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px;
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: #8C8680;
+    margin: 0 0 0.6rem 0;
+}
+.sidebar-kv {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 0.4rem 0;
+    border-bottom: 1px solid #E8E4DC;
+    gap: 0.5rem;
+}
+.sidebar-kv-k {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    color: #8C8680;
+    flex-shrink: 0;
+}
+.sidebar-kv-v {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    color: #1A1814;
+    font-weight: 500;
+    text-align: right;
+}
+.pipeline-step {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.35rem 0;
+    border-bottom: 1px solid #E8E4DC;
+}
+.step-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #C8B89A;
+    flex-shrink: 0;
+}
+.step-text {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    color: #1A1814;
+}
+.history-pill {
+    display: block;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    color: #8C8680;
+    background: #EDEAE4;
+    border: 1px solid #DDD9D2;
+    border-radius: 6px;
+    padding: 0.4rem 0.7rem;
+    margin-bottom: 0.4rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    cursor: default;
+}
+.key-status-ok {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    color: #4A7C59;
+    background: #F0F7F0;
+    border: 1px solid #C3DCC9;
+    border-radius: 6px;
+    padding: 0.35rem 0.65rem;
+    margin-top: 0.4rem;
+    display: inline-block;
+}
+
+/* ── Sidebar text input ── */
+section[data-testid="stSidebar"] .stTextInput > div > div > input {
+    background: #F7F5F0 !important;
+    border: 1px solid #E8E4DC !important;
+    border-radius: 8px !important;
+    color: #1A1814 !important;
+    font-family: 'DM Sans', sans-serif !important;
+    font-size: 13px !important;
+    padding: 0.5rem 0.75rem !important;
+}
+section[data-testid="stSidebar"] .stTextInput > div > div > input::placeholder {
+    color: #B8B0A4 !important;
+}
+section[data-testid="stSidebar"] .stTextInput > div > div > input:focus {
+    border-color: #C8B89A !important;
+    box-shadow: 0 0 0 3px rgba(200,184,154,0.15) !important;
+}
+section[data-testid="stSidebar"] .stTextInput > label { display: none !important; }
 
 /* ── Hero ── */
 .hero-eyebrow {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.65rem;
-    letter-spacing: 0.18em;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px;
+    font-weight: 400;
+    letter-spacing: 0.16em;
     text-transform: uppercase;
-    color: #F59E0B;
-    margin-bottom: 0.5rem;
+    color: #C8B89A;
+    margin-bottom: 0.75rem;
 }
-.hero-title {
+.hero-heading {
     font-family: 'DM Serif Display', serif;
-    font-size: 2.4rem;
-    color: #F0F4FF;
-    line-height: 1.15;
-    margin: 0 0 0.5rem 0;
+    font-size: clamp(36px, 5vw, 58px);
+    font-weight: 400;
+    color: #1A1814;
+    line-height: 1.12;
+    margin: 0 0 0.2rem 0;
     letter-spacing: -0.01em;
 }
-.hero-title em {
+.hero-heading em {
     font-style: italic;
-    color: #F59E0B;
+    color: #C8B89A;
 }
 .hero-sub {
-    font-size: 0.875rem;
-    color: #5A677D;
-    line-height: 1.6;
-    max-width: 560px;
-    margin: 0 0 2rem 0;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 16px;
+    font-weight: 300;
+    color: #8C8680;
+    line-height: 1.65;
+    max-width: 520px;
+    margin: 0.75rem 0 2.25rem 0;
 }
 
-/* ── API banner ── */
-.api-banner {
-    background: rgba(245,158,11,0.06);
-    border: 1px solid rgba(245,158,11,0.2);
-    border-radius: 10px;
-    padding: 1rem 1.25rem;
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    margin-bottom: 1.75rem;
-}
-.api-banner-icon { font-size: 1.1rem; }
-.api-banner-text {
-    font-size: 0.8rem;
-    color: #8A95A8;
-    flex: 1;
-}
-.api-banner-text strong { color: #F59E0B; font-weight: 600; }
-
-/* ── Search area ── */
-.search-wrap {
-    background: #181C28;
-    border: 1.5px solid #232840;
+/* ── Search box ── */
+.search-outer {
+    background: #FFFFFF;
+    border: 1.5px solid #E8E4DC;
     border-radius: 12px;
-    padding: 1rem 1.25rem;
-    margin-bottom: 0.75rem;
-    transition: border-color 0.2s;
+    padding: 0.85rem 1.1rem;
+    margin-bottom: 1rem;
+    transition: border-color 0.2s, box-shadow 0.2s;
 }
-.search-wrap:focus-within {
-    border-color: #F59E0B;
-    box-shadow: 0 0 0 3px rgba(245,158,11,0.08);
+.search-outer:focus-within {
+    border-color: #C8B89A;
+    box-shadow: 0 0 0 4px rgba(200,184,154,0.12);
 }
 .stTextInput > div > div > input {
     background: transparent !important;
     border: none !important;
     box-shadow: none !important;
-    color: #F0F4FF !important;
-    font-family: 'Inter', sans-serif !important;
-    font-size: 1rem !important;
+    color: #1A1814 !important;
+    font-family: 'DM Sans', sans-serif !important;
+    font-size: 17px !important;
+    font-weight: 400 !important;
     padding: 0 !important;
-    caret-color: #F59E0B;
+    caret-color: #C8B89A;
 }
-.stTextInput > div > div > input::placeholder { color: #353D52 !important; }
+.stTextInput > div > div > input::placeholder { color: #B8B0A4 !important; }
 .stTextInput > div { border: none !important; box-shadow: none !important; }
 .stTextInput > label { display: none !important; }
 
-/* ── Buttons ── */
-.stButton > button {
-    background: #F59E0B !important;
-    color: #10121A !important;
-    font-family: 'Inter', sans-serif !important;
-    font-weight: 600 !important;
-    font-size: 0.875rem !important;
+/* ── Primary button ── */
+.stButton > button[kind="primary"] {
+    background: #1A1814 !important;
+    color: #F7F5F0 !important;
+    font-family: 'DM Sans', sans-serif !important;
+    font-size: 14px !important;
+    font-weight: 500 !important;
     border: none !important;
     border-radius: 8px !important;
     padding: 0.6rem 1.5rem !important;
-    transition: all 0.18s ease !important;
     letter-spacing: 0.01em !important;
+    transition: all 0.18s !important;
     width: 100% !important;
 }
-.stButton > button:hover {
-    background: #FBBF24 !important;
+.stButton > button[kind="primary"]:hover {
+    background: #2D2922 !important;
     transform: translateY(-1px) !important;
-    box-shadow: 0 6px 20px rgba(245,158,11,0.25) !important;
+    box-shadow: 0 4px 16px rgba(26,24,20,0.18) !important;
 }
-.stButton > button:disabled {
-    background: #1E2535 !important;
-    color: #374151 !important;
-    transform: none !important;
-    box-shadow: none !important;
+.stButton > button[kind="primary"]:disabled {
+    background: #E8E4DC !important;
+    color: #B8B0A4 !important;
 }
 
-/* ── Example pills ── */
-.pill-row { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1.5rem; }
-.pill {
-    font-family: 'Inter', sans-serif;
-    font-size: 0.775rem;
-    color: #6B7FA3;
-    background: #181C28;
-    border: 1px solid #232840;
-    border-radius: 20px;
-    padding: 0.35rem 0.85rem;
-    cursor: pointer;
-    transition: all 0.15s;
-    white-space: nowrap;
+/* ── Secondary / example buttons ── */
+.stButton > button[kind="secondary"] {
+    background: #EDEAE4 !important;
+    color: #1A1814 !important;
+    font-family: 'DM Sans', sans-serif !important;
+    font-size: 13px !important;
+    font-weight: 400 !important;
+    border: 1px solid #DDD9D2 !important;
+    border-radius: 8px !important;
+    padding: 0.5rem 0.75rem !important;
+    width: 100% !important;
+    transition: all 0.15s !important;
+    text-align: left !important;
 }
-.pill:hover { border-color: #F59E0B; color: #F59E0B; }
-
-/* ── Stats bar ── */
-.stats-bar {
-    display: flex;
-    gap: 0;
-    background: #181C28;
-    border: 1px solid #232840;
-    border-radius: 10px;
-    overflow: hidden;
-    margin-bottom: 1.5rem;
+.stButton > button[kind="secondary"]:hover {
+    background: #FFFFFF !important;
+    border-color: #C8B89A !important;
+    color: #1A1814 !important;
 }
-.stat-cell {
-    flex: 1;
-    padding: 0.85rem 1.1rem;
-    border-right: 1px solid #232840;
-}
-.stat-cell:last-child { border-right: none; }
-.stat-label {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.6rem;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: #374151;
-    margin-bottom: 0.3rem;
-}
-.stat-value {
-    font-family: 'Inter', sans-serif;
-    font-size: 1rem;
-    font-weight: 600;
-    color: #F0F4FF;
-}
-.stat-value.amber { color: #F59E0B; }
-.stat-value.green { color: #10B981; }
-.stat-value.blue  { color: #60A5FA; }
-.stat-value.red   { color: #EF4444; }
-.stat-value.gray  { color: #6B7FA3; }
 
 /* ── Tabs ── */
 .stTabs [data-baseweb="tab-list"] {
     background: transparent !important;
-    border-bottom: 1px solid #232840 !important;
+    border-bottom: 1px solid #E8E4DC !important;
     gap: 0 !important;
     margin-bottom: 1.5rem !important;
 }
 .stTabs [data-baseweb="tab"] {
-    font-family: 'Inter', sans-serif !important;
-    font-size: 0.85rem !important;
-    font-weight: 500 !important;
-    color: #4B5563 !important;
+    font-family: 'DM Sans', sans-serif !important;
+    font-size: 14px !important;
+    font-weight: 400 !important;
+    color: #8C8680 !important;
     background: transparent !important;
     border: none !important;
     padding: 0.7rem 1.25rem !important;
@@ -206,221 +281,219 @@ html, body, [class*="css"] {
     transition: all 0.15s !important;
 }
 .stTabs [aria-selected="true"] {
-    color: #F59E0B !important;
-    border-bottom: 2px solid #F59E0B !important;
+    color: #1A1814 !important;
+    border-bottom: 2px solid #C8B89A !important;
 }
 
-/* ── Answer card ── */
-.answer-body {
-    background: #181C28;
-    border: 1px solid #232840;
-    border-radius: 12px;
-    padding: 1.5rem 1.75rem;
-    font-size: 0.9rem;
-    line-height: 1.8;
-    color: #C8D0E0;
-    margin-bottom: 0.75rem;
-}
-.answer-body h3 {
-    font-family: 'Inter', sans-serif;
-    font-size: 0.75rem;
-    font-weight: 600;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: #4B5563;
-    margin: 1.25rem 0 0.5rem 0;
-}
-.grounding-note {
+/* ── Stats bar ── */
+.stats-bar {
     display: flex;
-    align-items: flex-start;
-    gap: 0.6rem;
-    padding: 0.7rem 1rem;
-    background: rgba(245,158,11,0.04);
-    border: 1px solid rgba(245,158,11,0.1);
+    background: #FFFFFF;
+    border: 1px solid #E8E4DC;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 1.75rem;
+}
+.stat-cell {
+    flex: 1;
+    padding: 0.85rem 1.1rem;
+    border-right: 1px solid #E8E4DC;
+}
+.stat-cell:last-child { border-right: none; }
+.stat-label {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px;
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #8C8680;
+    margin-bottom: 0.3rem;
+}
+.stat-value {
+    font-family: 'DM Serif Display', serif;
+    font-size: 22px;
+    color: #1A1814;
+    line-height: 1.2;
+}
+.stat-value.gold { color: #C8B89A; }
+.stat-sub {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    color: #8C8680;
+    margin-top: 0.1rem;
+}
+
+/* ── Level pills ── */
+.lvl-pill {
+    display: inline-block;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+}
+.lvl-NONE     { color:#3D6B4F; background:#EBF5EE; border:1px solid #C3DCC9; }
+.lvl-LOW      { color:#2E5FA3; background:#EBF0FA; border:1px solid #BDD0F0; }
+.lvl-MODERATE { color:#8A6020; background:#FDF3E3; border:1px solid #E8D5A8; }
+.lvl-HIGH     { color:#8B2525; background:#FDF0F0; border:1px solid #E8BEBE; }
+.lvl-UNKNOWN  { color:#8C8680; background:#EDEAE4; border:1px solid #DDD9D2; }
+
+/* ── Answer card ── */
+.answer-card {
+    background: #FFFFFF;
+    border: 1px solid #E8E4DC;
+    border-radius: 12px;
+    padding: 1.75rem 2rem;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 300;
+    line-height: 1.8;
+    color: #1A1814;
+    margin-bottom: 1rem;
+}
+.answer-card strong { font-weight: 600; }
+.grounding-note {
+    background: #F7F5F0;
+    border: 1px solid #E8E4DC;
     border-radius: 8px;
-    font-size: 0.775rem;
-    color: #4B5563;
+    padding: 0.7rem 1rem;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    color: #8C8680;
     line-height: 1.5;
 }
 
 /* ── Source cards ── */
 .source-card {
-    background: #181C28;
-    border: 1px solid #232840;
+    background: #FFFFFF;
+    border: 1px solid #E8E4DC;
     border-radius: 10px;
-    padding: 1.1rem 1.25rem;
-    margin-bottom: 0.65rem;
-    transition: border-color 0.15s;
+    padding: 1.25rem 1.4rem;
+    margin-bottom: 0.75rem;
+    transition: border-color 0.15s, box-shadow 0.15s;
 }
-.source-card:hover { border-color: rgba(245,158,11,0.35); }
-.source-header {
+.source-card:hover {
+    border-color: #C8B89A;
+    box-shadow: 0 2px 12px rgba(200,184,154,0.12);
+}
+.source-top {
     display: flex;
     align-items: flex-start;
-    justify-content: space-between;
-    gap: 1rem;
+    gap: 0.85rem;
     margin-bottom: 0.5rem;
 }
 .source-num {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.65rem;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px;
     font-weight: 500;
-    color: #F59E0B;
-    background: rgba(245,158,11,0.08);
-    border: 1px solid rgba(245,158,11,0.15);
-    padding: 0.15rem 0.5rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #C8B89A;
+    background: #FAF8F5;
+    border: 1px solid #E8E4DC;
+    padding: 0.2rem 0.55rem;
     border-radius: 4px;
     flex-shrink: 0;
-    letter-spacing: 0.06em;
+    margin-top: 2px;
 }
 .source-title {
-    font-family: 'Inter', sans-serif;
-    font-size: 0.875rem;
-    font-weight: 600;
-    color: #E2E8F0;
-    line-height: 1.4;
+    font-family: 'DM Serif Display', serif;
+    font-size: 16px;
+    color: #1A1814;
+    line-height: 1.35;
     flex: 1;
 }
 .rrf-chip {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.6rem;
-    color: #374151;
-    background: #10121A;
-    border: 1px solid #1E2535;
-    padding: 0.15rem 0.45rem;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px;
+    color: #8C8680;
+    background: #EDEAE4;
+    border: 1px solid #DDD9D2;
+    padding: 0.2rem 0.5rem;
     border-radius: 4px;
     flex-shrink: 0;
+    margin-top: 2px;
 }
 .source-meta {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.72rem;
-    color: #374151;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    color: #8C8680;
     margin-bottom: 0.65rem;
 }
-.source-meta a { color: #60A5FA; text-decoration: none; }
+.source-meta a { color: #6A8CC7; text-decoration: none; }
 .source-meta a:hover { text-decoration: underline; }
 .source-abstract {
-    font-size: 0.8rem;
-    color: #6B7FA3;
-    line-height: 1.6;
-    border-top: 1px solid #1E2535;
-    padding-top: 0.65rem;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 300;
+    color: #8C8680;
+    line-height: 1.65;
+    border-top: 1px solid #E8E4DC;
+    padding-top: 0.75rem;
 }
 
-/* ── Contradiction ── */
-.level-pill {
-    display: inline-block;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.72rem;
-    font-weight: 600;
-    letter-spacing: 0.08em;
-    padding: 0.3rem 0.9rem;
-    border-radius: 20px;
-}
-.lvl-NONE     { color:#10B981; background:rgba(16,185,129,0.08); border:1px solid rgba(16,185,129,0.2); }
-.lvl-LOW      { color:#60A5FA; background:rgba(96,165,250,0.08); border:1px solid rgba(96,165,250,0.2); }
-.lvl-MODERATE { color:#F59E0B; background:rgba(245,158,11,0.08); border:1px solid rgba(245,158,11,0.2); }
-.lvl-HIGH     { color:#EF4444; background:rgba(239,68,68,0.08);  border:1px solid rgba(239,68,68,0.2);  }
-.lvl-UNKNOWN  { color:#6B7FA3; background:rgba(107,127,163,0.08); border:1px solid rgba(107,127,163,0.2); }
-
-.contradiction-header {
+/* ── Contradiction section ── */
+.contra-header {
     display: flex;
     align-items: center;
     gap: 1rem;
+    background: #FFFFFF;
+    border: 1px solid #E8E4DC;
+    border-radius: 10px;
     padding: 1rem 1.25rem;
-    background: #181C28;
-    border: 1px solid #232840;
-    border-radius: 10px;
-    margin-bottom: 1rem;
+    margin-bottom: 0.75rem;
 }
-.contradiction-header-label {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.62rem;
-    letter-spacing: 0.12em;
+.contra-label {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px;
+    font-weight: 400;
     text-transform: uppercase;
-    color: #374151;
+    letter-spacing: 0.1em;
+    color: #8C8680;
 }
-.contradiction-body {
-    background: #181C28;
-    border: 1px solid #232840;
+.contra-body {
+    background: #FFFFFF;
+    border: 1px solid #E8E4DC;
     border-radius: 10px;
-    padding: 1.25rem 1.5rem;
-    font-size: 0.875rem;
-    line-height: 1.75;
-    color: #C8D0E0;
-}
-
-/* ── Sidebar ── */
-section[data-testid="stSidebar"] {
-    background: #0D0F18 !important;
-    border-right: 1px solid #1A1F2E !important;
-}
-.sidebar-logo {
-    font-family: 'DM Serif Display', serif;
-    font-size: 1.2rem;
-    color: #F59E0B;
-    margin-bottom: 0.15rem;
-}
-.sidebar-logo-sub {
-    font-size: 0.7rem;
-    color: #374151;
-    font-family: 'JetBrains Mono', monospace;
-    letter-spacing: 0.08em;
-    margin-bottom: 1.5rem;
-}
-.sidebar-section {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.6rem;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: #2D3545;
-    margin: 1.25rem 0 0.6rem 0;
-}
-.sidebar-kv {
-    display: flex;
-    justify-content: space-between;
-    padding: 0.3rem 0;
-    border-bottom: 1px solid #141720;
-}
-.sidebar-kv-k { font-size: 0.775rem; color: #4B5563; }
-.sidebar-kv-v {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.72rem;
-    color: #F59E0B;
-    font-weight: 500;
-}
-.history-item {
-    padding: 0.45rem 0.65rem;
-    background: #141720;
-    border: 1px solid #1A1F2E;
-    border-radius: 6px;
-    font-size: 0.775rem;
-    color: #4B5563;
-    margin-bottom: 0.4rem;
-    cursor: pointer;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-.history-item:hover { border-color: #F59E0B; color: #C8D0E0; }
-
-/* ── Spinner ── */
-.stSpinner > div { border-top-color: #F59E0B !important; }
-
-/* ── Alert ── */
-.stAlert {
-    background: rgba(245,158,11,0.04) !important;
-    border: 1px solid rgba(245,158,11,0.12) !important;
-    border-radius: 8px !important;
-    color: #5A677D !important;
-    font-size: 0.825rem !important;
+    padding: 1.5rem 1.75rem;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 300;
+    line-height: 1.8;
+    color: #1A1814;
 }
 
 /* ── Divider ── */
-hr { border-color: #1A1F2E !important; }
+hr { border-color: #E8E4DC !important; margin: 1.75rem 0 !important; }
+
+/* ── Spinner ── */
+.stSpinner > div { border-top-color: #C8B89A !important; }
+
+/* ── Alert ── */
+.stAlert {
+    background: #F7F5F0 !important;
+    border: 1px solid #E8E4DC !important;
+    border-radius: 8px !important;
+    color: #8C8680 !important;
+    font-family: 'DM Sans', sans-serif !important;
+    font-size: 13px !important;
+}
+
+/* ── Section label used in sources / contradiction ── */
+.section-label {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px;
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: #8C8680;
+    margin-bottom: 1rem;
+}
 </style>
 """, unsafe_allow_html=True)
 
-# ── Configuration ────────────────────────────────────────────
+# ── Config ───────────────────────────────────────────────────
 EMBEDDINGS_PATH = "embeddings.npy"
 CHUNKS_PATH     = "chunks.pkl"
 BM25_PATH       = "bm25_index.pkl"
@@ -444,17 +517,14 @@ Given these papers for the query "{query}":
 
 Respond with:
 1. CONTRADICTION LEVEL: NONE / LOW / MODERATE / HIGH
-2. AGREEMENTS: 2-3 specific points of agreement across papers.
+2. AGREEMENTS: 2-3 specific points of agreement.
 3. DISAGREEMENTS: Specific conflicting findings, or "None found."
 Reference papers by [N]."""
 
 # ── Session state ─────────────────────────────────────────────
-if "history" not in st.session_state:
-    st.session_state.history = []
-if "api_key_set" not in st.session_state:
-    st.session_state.api_key_set = False
-if "last_query" not in st.session_state:
-    st.session_state.last_query = ""
+if "history"    not in st.session_state: st.session_state.history    = []
+if "last_query" not in st.session_state: st.session_state.last_query = ""
+if "fill_query" not in st.session_state: st.session_state.fill_query = ""
 
 # ── Load resources ────────────────────────────────────────────
 @st.cache_resource(show_spinner="Loading embedding model...")
@@ -501,7 +571,7 @@ def sparse_retrieve(query, bm25_index, chunks, top_k=TOP_K_SPARSE):
         "metadata": {k: chunks[i][k] for k in ("arxiv_id","title","categories")}
     } for i in top_idx]
 
-def rrf(dense, sparse, k=RRF_K, top_k=TOP_K_FINAL):
+def rrf_merge(dense, sparse, k=RRF_K, top_k=TOP_K_FINAL):
     scores, cmap = defaultdict(float), {}
     for rank, h in enumerate(dense, 1):
         scores[h["chunk_id"]] += 1/(k+rank); cmap[h["chunk_id"]] = h
@@ -514,7 +584,7 @@ def rrf(dense, sparse, k=RRF_K, top_k=TOP_K_FINAL):
     return result
 
 def hybrid_retrieve(query, embed_model, embeddings, bm25_index, chunks):
-    return rrf(
+    return rrf_merge(
         dense_retrieve(query, embed_model, embeddings, chunks),
         sparse_retrieve(query, bm25_index, chunks)
     )
@@ -532,17 +602,15 @@ def ask_gemini(prompt, client):
     except Exception as e:
         return f"Gemini error: {e}"
 
-def grounded_answer(query, papers, client):
+def get_answer(query, papers, client):
     ctx = build_context(papers)
     return ask_gemini(
         f"{RAG_SYSTEM_PROMPT}\n\n---\nCONTEXT:\n{ctx}\n\n---\nQUESTION: {query}\n\nANSWER:", client
     )
 
-def contradiction_report(query, papers, client):
+def get_contradiction(query, papers, client):
     ctx = build_context(papers)
-    return ask_gemini(
-        CONTRADICTION_PROMPT.format(query=query, context=ctx), client
-    )
+    return ask_gemini(CONTRADICTION_PROMPT.format(query=query, context=ctx), client)
 
 def get_level(text):
     for l in ["HIGH","MODERATE","LOW","NONE"]:
@@ -550,40 +618,42 @@ def get_level(text):
     return "UNKNOWN"
 
 def level_pill(level):
-    return f'<span class="level-pill lvl-{level}">{level}</span>'
+    return f'<span class="lvl-pill lvl-{level}">{level}</span>'
 
-def level_color(level):
-    return {"NONE":"green","LOW":"blue","MODERATE":"amber","HIGH":"red"}.get(level,"gray")
-
-# ── Sidebar ───────────────────────────────────────────────────
+# ── SIDEBAR ───────────────────────────────────────────────────
 with st.sidebar:
-    st.markdown('<div class="sidebar-logo">ArXiv Lens</div>', unsafe_allow_html=True)
-    st.markdown('<div class="sidebar-logo-sub">ML Research Assistant</div>', unsafe_allow_html=True)
+    st.markdown('<div class="sidebar-brand">ArXiv Lens</div>', unsafe_allow_html=True)
+    st.markdown('<div class="sidebar-brand-sub">ML Research Assistant</div>', unsafe_allow_html=True)
 
-    st.markdown('<div class="sidebar-section">API Key</div>', unsafe_allow_html=True)
-    api_key = st.text_input(
-        "", type="password",
-        placeholder="Gemini API key",
-        label_visibility="collapsed"
-    )
+    st.markdown('<p class="sidebar-section-label">Gemini API Key</p>', unsafe_allow_html=True)
+    api_key = st.text_input("", type="password", placeholder="Paste your key here", label_visibility="collapsed")
     if api_key:
-        st.markdown('<span style="font-size:0.72rem;color:#10B981;">✓ Key set — ready to search</span>', unsafe_allow_html=True)
+        st.markdown('<span class="key-status-ok">✓ Key set — ready to search</span>', unsafe_allow_html=True)
     else:
-        st.caption("Get one free at [aistudio.google.com](https://aistudio.google.com)")
+        st.markdown('<span style="font-size:12px;color:#8C8680;">Get a free key at <a href="https://aistudio.google.com" style="color:#6A8CC7;">aistudio.google.com</a></span>', unsafe_allow_html=True)
 
-    st.markdown('<div class="sidebar-section">Knowledge Base</div>', unsafe_allow_html=True)
-    for k, v in [("Papers","5,000"),("Categories","cs.LG · cs.AI · cs.CL · cs.CV · stat.ML"),("Chunk strategy","1 abstract = 1 chunk"),("Embedding","MiniLM-L6-v2 · 384d")]:
+    st.markdown('<hr class="sidebar-divider">', unsafe_allow_html=True)
+    st.markdown('<p class="sidebar-section-label">Knowledge Base</p>', unsafe_allow_html=True)
+    for k, v in [
+        ("Papers", "5,000"),
+        ("Source", "ArXiv ML abstracts"),
+        ("Categories", "cs.LG · cs.AI · cs.CL · cs.CV · stat.ML"),
+        ("Embedding", "MiniLM-L6-v2 · 384d"),
+        ("Chunk", "1 abstract = 1 chunk"),
+    ]:
         st.markdown(f'<div class="sidebar-kv"><span class="sidebar-kv-k">{k}</span><span class="sidebar-kv-v">{v}</span></div>', unsafe_allow_html=True)
 
-    st.markdown('<div class="sidebar-section">Pipeline</div>', unsafe_allow_html=True)
-    for step in ["Dense cosine search","BM25 keyword search","RRF fusion (k=60)","Gemini 3.5 Flash"]:
-        st.markdown(f'<div style="font-size:0.775rem;color:#4B5563;padding:0.25rem 0;border-bottom:1px solid #141720;">→ {step}</div>', unsafe_allow_html=True)
+    st.markdown('<hr class="sidebar-divider">', unsafe_allow_html=True)
+    st.markdown('<p class="sidebar-section-label">Retrieval Pipeline</p>', unsafe_allow_html=True)
+    for step in ["Dense cosine similarity (top 10)", "BM25 keyword search (top 10)", "Reciprocal Rank Fusion (k=60)", f"Top {TOP_K_FINAL} papers → Gemini 3.5 Flash"]:
+        st.markdown(f'<div class="pipeline-step"><div class="step-dot"></div><span class="step-text">{step}</span></div>', unsafe_allow_html=True)
 
     if st.session_state.history:
-        st.markdown('<div class="sidebar-section">Recent queries</div>', unsafe_allow_html=True)
+        st.markdown('<hr class="sidebar-divider">', unsafe_allow_html=True)
+        st.markdown('<p class="sidebar-section-label">Recent Queries</p>', unsafe_allow_html=True)
         for q in reversed(st.session_state.history[-5:]):
-            truncated = q[:42] + "…" if len(q) > 42 else q
-            st.markdown(f'<div class="history-item" title="{q}">{truncated}</div>', unsafe_allow_html=True)
+            short = q[:44] + "…" if len(q) > 44 else q
+            st.markdown(f'<div class="history-pill" title="{q}">{short}</div>', unsafe_allow_html=True)
 
 # ── Load indexes ──────────────────────────────────────────────
 embed_model = load_embed_model()
@@ -594,38 +664,37 @@ bm25_index  = load_bm25()
 # ── Hero ──────────────────────────────────────────────────────
 st.markdown("""
 <div class="hero-eyebrow">5,000 ArXiv ML Papers · Hybrid Retrieval · Grounded by Gemini</div>
-<h1 class="hero-title">Ask the research.<br><em>Get cited answers.</em></h1>
+<h1 class="hero-heading">Ask the research.<br><em>Get cited answers.</em></h1>
 <p class="hero-sub">
-    Type a question. ArXiv Lens retrieves the most relevant papers using both semantic and keyword search,
-    then generates a grounded answer with inline citations — and tells you when papers disagree.
+    Type a research question. ArXiv Lens retrieves the most relevant papers using both semantic
+    and keyword search, then generates a grounded answer with inline citations —
+    and tells you when papers disagree.
 </p>
 """, unsafe_allow_html=True)
 
 # ── Search input ──────────────────────────────────────────────
-st.markdown('<div class="search-wrap">', unsafe_allow_html=True)
+# Pre-fill from example button click
+default_query = st.session_state.fill_query
+st.session_state.fill_query = ""
+
+st.markdown('<div class="search-outer">', unsafe_allow_html=True)
 query = st.text_input(
     "",
+    value=default_query,
     placeholder="e.g. How does attention mechanism work in transformers?",
     label_visibility="collapsed",
-    key="query_input"
+    key="main_query"
 )
 st.markdown('</div>', unsafe_allow_html=True)
 
 col_btn, col_hint = st.columns([1, 4])
 with col_btn:
-    search = st.button(
-        "Search papers →",
-        type="primary",
-        disabled=not api_key or not query,
-        use_container_width=True
-    )
+    search_clicked = st.button("Search papers →", type="primary", disabled=not api_key or not query, use_container_width=True)
 with col_hint:
     if not api_key:
-        st.markdown('<span style="font-size:0.78rem;color:#374151;line-height:3rem;display:block;padding-top:0.6rem;">Add your Gemini API key in the sidebar to enable search.</span>', unsafe_allow_html=True)
-    elif not query:
-        st.markdown('<span style="font-size:0.78rem;color:#374151;line-height:3rem;display:block;padding-top:0.6rem;">Press Enter or click Search after typing your question.</span>', unsafe_allow_html=True)
-    else:
-        st.markdown('<span style="font-size:0.78rem;color:#374151;line-height:3rem;display:block;padding-top:0.6rem;">Press Enter or click Search.</span>', unsafe_allow_html=True)
+        st.markdown('<p style="font-size:13px;color:#B8B0A4;padding-top:0.6rem;margin:0;">Add your Gemini API key in the sidebar to start.</p>', unsafe_allow_html=True)
+    elif query:
+        st.markdown('<p style="font-size:13px;color:#B8B0A4;padding-top:0.6rem;margin:0;">Press Enter or click Search.</p>', unsafe_allow_html=True)
 
 # ── Example queries ───────────────────────────────────────────
 EXAMPLES = [
@@ -633,24 +702,29 @@ EXAMPLES = [
     "How does reinforcement learning work?",
     "What are attention mechanisms?",
     "What is federated learning?",
-    "How does BERT work?",
+    "How does BERT represent language?",
 ]
 
 if not query:
-    st.markdown('<p style="font-size:0.72rem;color:#2D3545;font-family:JetBrains Mono,monospace;letter-spacing:0.1em;text-transform:uppercase;margin:1.25rem 0 0.6rem;">Try an example</p>', unsafe_allow_html=True)
+    st.markdown('<p class="section-label" style="margin-top:1.25rem;">Try an example</p>', unsafe_allow_html=True)
     ex_cols = st.columns(len(EXAMPLES))
     for col, ex in zip(ex_cols, EXAMPLES):
         with col:
             if st.button(ex, key=f"ex_{ex}", use_container_width=True):
-                st.session_state["query_input"] = ex
+                st.session_state.fill_query = ex
                 st.rerun()
 
 st.markdown("<hr>", unsafe_allow_html=True)
 
-# ── Search logic ──────────────────────────────────────────────
-# Trigger on button click OR Enter (query change from non-empty)
-trigger = search or (query and query != st.session_state.last_query and api_key)
+# ── Trigger logic ─────────────────────────────────────────────
+# Fire on button click OR on Enter (query changed from last run)
+trigger = search_clicked or (
+    bool(query) and
+    bool(api_key) and
+    query != st.session_state.last_query
+)
 
+# ── Run pipeline ──────────────────────────────────────────────
 if trigger and api_key and query:
     st.session_state.last_query = query
     if query not in st.session_state.history:
@@ -662,80 +736,74 @@ if trigger and api_key and query:
         papers = hybrid_retrieve(query, embed_model, embeddings, bm25_index, chunks)
 
     with st.spinner("Generating grounded answer with Gemini 3.5 Flash..."):
-        answer = grounded_answer(query, papers, client)
+        answer = get_answer(query, papers, client)
 
     with st.spinner("Running cross-paper contradiction analysis..."):
-        report = contradiction_report(query, papers, client)
+        report = get_contradiction(query, papers, client)
 
     level = get_level(report)
-    lcolor = level_color(level)
 
-    # ── Stats bar
+    # Stats bar
     st.markdown(f"""
     <div class="stats-bar">
         <div class="stat-cell">
             <div class="stat-label">Papers retrieved</div>
-            <div class="stat-value amber">{len(papers)}</div>
+            <div class="stat-value gold">{len(papers)}</div>
+            <div class="stat-sub">of 5,000 indexed</div>
         </div>
         <div class="stat-cell">
-            <div class="stat-label">Retrieval method</div>
-            <div class="stat-value">Dense + BM25 → RRF</div>
-        </div>
-        <div class="stat-cell">
-            <div class="stat-label">Contradiction level</div>
-            <div class="stat-value">{level_pill(level)}</div>
+            <div class="stat-label">Retrieval</div>
+            <div class="stat-value" style="font-size:15px;padding-top:4px;">Dense + BM25</div>
+            <div class="stat-sub">RRF fusion (k=60)</div>
         </div>
         <div class="stat-cell">
             <div class="stat-label">Top RRF score</div>
-            <div class="stat-value amber">{papers[0]['rrf_score']}</div>
+            <div class="stat-value gold" style="font-size:18px;padding-top:4px;">{papers[0]['rrf_score']}</div>
+            <div class="stat-sub">strongest match</div>
         </div>
         <div class="stat-cell">
-            <div class="stat-label">Generation</div>
-            <div class="stat-value">Gemini 3.5 Flash</div>
+            <div class="stat-label">Contradiction</div>
+            <div style="margin-top:6px;">{level_pill(level)}</div>
+        </div>
+        <div class="stat-cell">
+            <div class="stat-label">Model</div>
+            <div class="stat-value" style="font-size:14px;padding-top:4px;">Gemini 3.5 Flash</div>
+            <div class="stat-sub">grounded generation</div>
         </div>
     </div>
     """, unsafe_allow_html=True)
 
-    # ── Tabs
+    # Tabs
     tab_a, tab_s, tab_c = st.tabs([
         "📝  Answer",
         f"📄  Sources  ({len(papers)})",
         f"⚖️  Contradictions  ·  {level}"
     ])
 
-    # Tab 1 — Answer
+    # ── Answer tab
     with tab_a:
-        st.markdown(f'<div class="answer-body">{answer}</div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="answer-card">{answer}</div>', unsafe_allow_html=True)
         st.markdown("""
         <div class="grounding-note">
-            <span>🔒</span>
-            <span>Every claim is grounded in the retrieved papers above.
-            Numbers like [1] refer to sources in the Sources tab.
-            When papers conflict, disagreements are stated explicitly — not blended into false consensus.</span>
+            🔒 Every claim is grounded in the retrieved papers. [1], [2], etc. refer to sources in the Sources tab.
+            When papers conflict, disagreements are stated explicitly — never silently blended.
         </div>
         """, unsafe_allow_html=True)
 
-    # Tab 2 — Sources
+    # ── Sources tab
     with tab_s:
-        st.markdown(f"""
-        <p style="font-size:0.8rem;color:#4B5563;margin-bottom:1rem;">
-            Ranked by Reciprocal Rank Fusion across dense semantic and BM25 keyword search.
-            A higher RRF score means both retrieval methods agreed this paper is relevant.
-        </p>
-        """, unsafe_allow_html=True)
-
+        st.markdown('<p class="section-label">Ranked by Reciprocal Rank Fusion across dense and keyword retrieval. Higher score = both methods agreed.</p>', unsafe_allow_html=True)
         for i, p in enumerate(papers, 1):
             aid   = p["metadata"]["arxiv_id"]
             title = p["metadata"]["title"]
             cats  = p["metadata"]["categories"]
             rrf_s = p["rrf_score"]
             url   = f"https://arxiv.org/abs/{aid}"
-            abst  = p["document"][:320]
-
+            abst  = p["document"][:340]
             st.markdown(f"""
             <div class="source-card">
-                <div class="source-header">
-                    <span class="source-num">SOURCE [{i}]</span>
+                <div class="source-top">
+                    <span class="source-num">[ {i} ]</span>
                     <span class="source-title">{title}</span>
                     <span class="rrf-chip">RRF {rrf_s}</span>
                 </div>
@@ -746,20 +814,13 @@ if trigger and api_key and query:
             </div>
             """, unsafe_allow_html=True)
 
-    # Tab 3 — Contradictions
+    # ── Contradiction tab
     with tab_c:
+        st.markdown(f'<p class="section-label">Gemini analyses the {len(papers)} retrieved papers for agreements and conflicts. Most RAG systems silently blend contradictions — ArXiv Lens surfaces them.</p>', unsafe_allow_html=True)
         st.markdown(f"""
-        <p style="font-size:0.8rem;color:#4B5563;margin-bottom:1rem;">
-            Gemini analyses the {len(papers)} retrieved papers for agreements and conflicts.
-            Most RAG systems silently average contradictions into one confident answer.
-            ArXiv Lens surfaces them explicitly.
-        </p>
-        """, unsafe_allow_html=True)
-
-        st.markdown(f"""
-        <div class="contradiction-header">
-            <span class="contradiction-header-label">Overall contradiction level</span>
+        <div class="contra-header">
+            <span class="contra-label">Overall contradiction level</span>
             {level_pill(level)}
         </div>
-        <div class="contradiction-body">{report}</div>
+        <div class="contra-body">{report}</div>
         """, unsafe_allow_html=True)

@@ -413,7 +413,7 @@ TOP_K_SPARSE = 10
 TOP_K_FINAL  = 5
 RRF_K        = 60
 
-MODEL = "gemini-1.5-flash"
+MODEL = "gemini-3.5-flash"
 
 RAG_SYSTEM_PROMPT = """You are a precise ML research assistant. Answer using ONLY the provided context.
 

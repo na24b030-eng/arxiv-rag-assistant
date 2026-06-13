@@ -261,7 +261,7 @@ TOP_K_DENSE  = 10
 TOP_K_SPARSE = 10
 TOP_K_FINAL  = 5
 RRF_K        = 60
-MODEL        = "gemini-2.0-flash"   # updated: gemini-3.5-flash doesn't exist
+MODEL        = "gemini-3.5-flash"   # updated: gemini-3.5-flash doesn't exist
 
 RAG_SYSTEM_PROMPT = """You are a precise ML research assistant. Answer using ONLY the provided context.
 Rules:

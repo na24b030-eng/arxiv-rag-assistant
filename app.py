@@ -31,13 +31,13 @@ TOP_K_SPARSE = 10
 TOP_K_FINAL  = 5
 RRF_K        = 60
 
-MODEL = "gemini-2.0-flash"
+MODEL = "gemini-3.5-flash"
 
 RAG_SYSTEM_PROMPT = """You are a precise ML research assistant. Answer using ONLY the provided context.
 
 Formatting rules:
 1. Cite every factual claim inline using [N] — e.g. "Transfer learning reuses features [1][3]."
-2. If two sources CONFLICT, write: "⚠ Sources disagree: [A] says X while [B] says Y." Do NOT blend them.
+2. If two sources CONFLICT, write: "Sources disagree: [A] says X while [B] says Y." Do NOT blend them.
 3. If the answer is not in the context, say: "Not covered in the retrieved papers."
 4. Keep your answer under 300 words.
 5. End with a ### Sources section listing each [N] you cited."""
@@ -57,7 +57,7 @@ Analyse the provided papers and respond with:
 Be precise. Reference papers by [N] number."""
 
 # ============================================================
-# LOAD RESOURCES — cached so they only load once per session
+# LOAD RESOURCES
 # ============================================================
 
 @st.cache_resource(show_spinner="Loading embedding model...")
@@ -80,7 +80,7 @@ def load_bm25():
         return pickle.load(f)
 
 # ============================================================
-# RETRIEVAL FUNCTIONS
+# RETRIEVAL
 # ============================================================
 
 def tokenise(text: str) -> list:
@@ -167,17 +167,20 @@ def build_context_block(retrieved_chunks):
     return "\n\n".join(lines)
 
 def generate_grounded_answer(query, retrieved_chunks, client):
-    context  = build_context_block(retrieved_chunks)
-    prompt   = (
+    context = build_context_block(retrieved_chunks)
+    prompt  = (
         f"{RAG_SYSTEM_PROMPT}\n\n"
         f"---\nCONTEXT:\n{context}\n\n"
         f"---\nQUESTION: {query}\n\nANSWER:"
     )
-    response = client.models.generate_content(
-        model    = MODEL,
-        contents = prompt
-    )
-    return response.text
+    try:
+        response = client.models.generate_content(
+            model    = MODEL,
+            contents = prompt
+        )
+        return response.text
+    except Exception as e:
+        return f"Gemini error: {str(e)}"
 
 def detect_contradictions(query, retrieved_chunks, client):
     context = build_context_block(retrieved_chunks)
@@ -186,11 +189,14 @@ def detect_contradictions(query, retrieved_chunks, client):
         f"Papers retrieved for query: \"{query}\"\n\n"
         f"{context}"
     )
-    response = client.models.generate_content(
-        model    = MODEL,
-        contents = prompt
-    )
-    return response.text
+    try:
+        response = client.models.generate_content(
+            model    = MODEL,
+            contents = prompt
+        )
+        return response.text
+    except Exception as e:
+        return f"Gemini error: {str(e)}"
 
 def get_contradiction_level(report_text):
     for level in ["HIGH", "MODERATE", "LOW", "NONE"]:
@@ -199,7 +205,7 @@ def get_contradiction_level(report_text):
     return "UNKNOWN"
 
 # ============================================================
-# UI — HEADER
+# UI
 # ============================================================
 
 st.title("🔬 ArXiv Research Assistant")
@@ -210,10 +216,7 @@ st.caption(
 )
 st.divider()
 
-# ============================================================
-# SIDEBAR
-# ============================================================
-
+# ── Sidebar
 with st.sidebar:
     st.header("⚙️ Configuration")
     api_key = st.text_input(
@@ -236,23 +239,17 @@ with st.sidebar:
     st.markdown(f"- Top {TOP_K_FINAL} papers sent to Gemini")
     st.divider()
     st.markdown("**Generation**")
-    st.markdown("- Gemini 2.0 Flash")
+    st.markdown("- Gemini 1.5 Flash")
     st.markdown("- Inline [N] citations")
     st.markdown("- Contradiction analysis")
 
-# ============================================================
-# LOAD INDEXES
-# ============================================================
-
+# ── Load indexes
 embed_model = load_embed_model()
 embeddings  = load_embeddings()
 chunks      = load_chunks()
 bm25_index  = load_bm25()
 
-# ============================================================
-# QUERY INPUT
-# ============================================================
-
+# ── Query input
 query = st.text_input(
     "Ask a question about ML research",
     placeholder="e.g. What is transfer learning?  /  How does attention work?",
@@ -267,31 +264,24 @@ run_btn = st.button(
 if not api_key:
     st.info("Enter your Gemini API key in the sidebar to start.")
 
-# ============================================================
-# ON SEARCH
-# ============================================================
-
+# ── On search
 if run_btn and api_key and query:
 
     client = genai.Client(api_key=api_key)
 
-    # Step 1 — Hybrid Retrieval
     with st.spinner("Retrieving relevant papers..."):
         retrieved = hybrid_retrieve(
             query, embed_model, embeddings, bm25_index, chunks
         )
 
-    # Step 2 — Grounded Answer
     with st.spinner("Generating grounded answer..."):
         answer = generate_grounded_answer(query, retrieved, client)
 
-    # Step 3 — Contradiction Analysis
     with st.spinner("Analysing contradictions..."):
         contradiction_report = detect_contradictions(query, retrieved, client)
 
     contradiction_level = get_contradiction_level(contradiction_report)
 
-    # ── Tabs
     tab_answer, tab_sources, tab_contradiction = st.tabs([
         "📝 Answer", "📄 Sources", "⚖️ Contradiction Report"
     ])
@@ -308,7 +298,6 @@ if run_btn and api_key and query:
             cats     = paper["metadata"]["categories"]
             rrf      = paper["rrf_score"]
             url      = f"https://arxiv.org/abs/{arxiv_id}"
-
             with st.expander(f"[{i}]  {title}"):
                 col1, col2 = st.columns([3, 1])
                 with col1:

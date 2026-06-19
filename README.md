@@ -2,7 +2,7 @@
 
 A RAG system that answers questions about machine learning research using 5,000 ArXiv paper abstracts as its knowledge base. Every answer cites the specific papers it draws from, and a second analysis pass explicitly checks whether those papers agree or contradict each other — rather than silently blending conflicting sources into one confident-sounding response.
 
-**[→ Live demo](YOUR_STREAMLIT_URL_HERE)** — bring your own Gemini API key (free at [aistudio.google.com](https://aistudio.google.com))
+**[→ Live demo](https://arxiv-rag-assistant-8mnjabhkrwnuqeu5pqgwwt.streamlit.app/)** — bring your own Gemini API key (free at [aistudio.google.com](https://aistudio.google.com))
 
 ---
 
